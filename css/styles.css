@@ -1,0 +1,80 @@
+:root {
+  --bg: #F7F5F1;
+  --surface: #FFFFFF;
+  --surface-2: #EFEBE3;
+  --border: #E2DDD0;
+  --text: #1C1B18;
+  --text-muted: #71695E;
+  --accent: #2F6F5E;
+  --accent-soft: #E1EEE8;
+  --good: #2F8F5B;
+  --good-soft: #E4F3EA;
+  --warning: #AE7A1E;
+  --warning-soft: #F6EBD8;
+  --critical: #B84438;
+  --critical-soft: #F7E5E2;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161A;
+    --surface: #1A1F23;
+    --surface-2: #21272B;
+    --border: #2C3337;
+    --text: #ECEDE8;
+    --text-muted: #9BA29C;
+    --accent: #64B49A;
+    --accent-soft: #1D2E28;
+    --good: #55B587;
+    --good-soft: #1B2E24;
+    --warning: #E0AC4F;
+    --warning-soft: #322A18;
+    --critical: #E1786A;
+    --critical-soft: #35201D;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #12161A;
+  --surface: #1A1F23;
+  --surface-2: #21272B;
+  --border: #2C3337;
+  --text: #ECEDE8;
+  --text-muted: #9BA29C;
+  --accent: #64B49A;
+  --accent-soft: #1D2E28;
+  --good: #55B587;
+  --good-soft: #1B2E24;
+  --warning: #E0AC4F;
+  --warning-soft: #322A18;
+  --critical: #E1786A;
+  --critical-soft: #35201D;
+}
+
+body { background: var(--bg); color: var(--text); }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+::selection { background: var(--accent-soft); color: var(--accent); }
+
+h1, h2, h3 { text-wrap: balance; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+.bar-track { background: var(--surface-2); }
+.bar-fill { transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+.chip-good { background: var(--good-soft); color: var(--good); }
+.chip-warn { background: var(--warning-soft); color: var(--warning); }
+.chip-bad { background: var(--critical-soft); color: var(--critical); }
+
+.row-enter { animation: rowIn 0.3s ease forwards; }
+@keyframes rowIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }

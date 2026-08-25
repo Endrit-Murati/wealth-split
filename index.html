@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Personal Finance Dashboard — 50/30/20</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/styles.css">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="js/config.js"></script>
+</head>
+<body class="font-sans min-h-screen antialiased">
+
+<div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+
+  <!-- Top bar -->
+  <header class="flex items-center justify-between gap-4 py-6 sm:py-8 border-b border-border">
+    <div>
+      <p class="text-xs uppercase tracking-[0.14em] text-muted font-medium mb-1">Personal Finance</p>
+      <h1 class="font-display text-2xl sm:text-3xl font-semibold text-ink">Budget Dashboard</h1>
+    </div>
+    <div class="flex items-center gap-2">
+      <select id="currency" aria-label="Currency" class="hidden sm:block rounded-lg bg-surface border border-border px-3 py-2 text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent">
+        <option value="€">EUR €</option>
+        <option value="$">USD $</option>
+        <option value="£">GBP £</option>
+        <option value="Lek">ALL Lek</option>
+        <option value="Fr">CHF Fr</option>
+      </select>
+      <button id="theme-toggle" type="button" aria-label="Toggle dark mode"
+        class="inline-flex items-center justify-center h-10 w-10 rounded-full border border-border bg-surface text-muted hover:text-ink transition-colors">
+        <svg id="icon-sun" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364 6.364-1.06-1.06M6.696 6.696 5.636 5.636m12.728 0-1.06 1.06M6.696 17.304l-1.06 1.06M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" />
+        </svg>
+        <svg id="icon-moon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Income setup -->
+  <section class="mt-6 rounded-xl bg-surface border border-border p-5 sm:p-6">
+    <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+      <div class="flex-1">
+        <label for="income" class="block text-sm font-medium text-ink mb-1.5">Monthly net salary</label>
+        <div class="relative">
+          <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-muted font-mono" id="currency-symbol-income">€</span>
+          <input id="income" type="number" inputmode="decimal" min="0" step="1" placeholder="e.g. 2500"
+            class="w-full pl-9 pr-4 py-3 rounded-lg bg-surface2 border border-border text-lg font-mono font-semibold tabular placeholder:font-sans placeholder:font-normal placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent transition-shadow" />
+        </div>
+        <select id="currency-mobile" aria-label="Currency" class="sm:hidden mt-2 w-full rounded-lg bg-surface border border-border px-3 py-2 text-sm font-medium text-ink focus:outline-none focus:ring-2 focus:ring-accent">
+          <option value="€">EUR €</option>
+          <option value="$">USD $</option>
+          <option value="£">GBP £</option>
+          <option value="Lek">ALL Lek</option>
+          <option value="Fr">CHF Fr</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-3 gap-3 flex-1">
+        <div class="rounded-lg bg-accentSoft px-3 py-2.5">
+          <p class="text-[11px] uppercase tracking-wide text-muted font-medium">Needs · 50%</p>
+          <p id="target-needs" class="font-mono font-semibold tabular text-ink mt-0.5">€0</p>
+        </div>
+        <div class="rounded-lg bg-accentSoft px-3 py-2.5">
+          <p class="text-[11px] uppercase tracking-wide text-muted font-medium">Wants · 30%</p>
+          <p id="target-wants" class="font-mono font-semibold tabular text-ink mt-0.5">€0</p>
+        </div>
+        <div class="rounded-lg bg-accentSoft px-3 py-2.5">
+          <p class="text-[11px] uppercase tracking-wide text-muted font-medium">Savings · 20%</p>
+          <p id="target-savings" class="font-mono font-semibold tabular text-ink mt-0.5">€0</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Month nav -->
+  <div class="mt-8 flex items-center justify-between">
+    <h2 class="font-display text-lg font-semibold text-ink">Monthly overview</h2>
+    <div class="flex items-center gap-1">
+      <button id="prev-month" aria-label="Previous month" class="h-8 w-8 rounded-md border border-border bg-surface text-muted hover:text-ink flex items-center justify-center transition-colors">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+      </button>
+      <span id="period-label" class="text-sm font-medium text-ink font-mono w-32 text-center tabular"></span>
+      <button id="next-month" aria-label="Next month" class="h-8 w-8 rounded-md border border-border bg-surface text-muted hover:text-ink flex items-center justify-center transition-colors">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Budget health cards -->
+  <section class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="bucket-card rounded-xl bg-surface border border-border p-5" data-bucket="Needs">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-ink">Needs</h3>
+        <span class="bucket-chip text-xs font-medium px-2.5 py-1 rounded-full"></span>
+      </div>
+      <p class="flex items-baseline gap-1.5 mb-3">
+        <span class="bucket-spent font-mono text-xl font-semibold tabular text-ink">€0</span>
+        <span class="text-sm text-muted">of <span class="bucket-target font-mono tabular">€0</span></span>
+      </p>
+      <div class="bar-track h-2 rounded-full overflow-hidden">
+        <div class="bucket-bar bar-fill h-full rounded-full" style="width:0%"></div>
+      </div>
+      <p class="bucket-remaining text-xs text-muted mt-2"></p>
+    </div>
+
+    <div class="bucket-card rounded-xl bg-surface border border-border p-5" data-bucket="Wants">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-ink">Wants</h3>
+        <span class="bucket-chip text-xs font-medium px-2.5 py-1 rounded-full"></span>
+      </div>
+      <p class="flex items-baseline gap-1.5 mb-3">
+        <span class="bucket-spent font-mono text-xl font-semibold tabular text-ink">€0</span>
+        <span class="text-sm text-muted">of <span class="bucket-target font-mono tabular">€0</span></span>
+      </p>
+      <div class="bar-track h-2 rounded-full overflow-hidden">
+        <div class="bucket-bar bar-fill h-full rounded-full" style="width:0%"></div>
+      </div>
+      <p class="bucket-remaining text-xs text-muted mt-2"></p>
+    </div>
+
+    <div class="bucket-card rounded-xl bg-surface border border-border p-5" data-bucket="Savings">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-ink">Savings & Investments</h3>
+        <span class="bucket-chip text-xs font-medium px-2.5 py-1 rounded-full"></span>
+      </div>
+      <p class="flex items-baseline gap-1.5 mb-3">
+        <span class="bucket-spent font-mono text-xl font-semibold tabular text-ink">€0</span>
+        <span class="text-sm text-muted">of <span class="bucket-target font-mono tabular">€0</span></span>
+      </p>
+      <div class="bar-track h-2 rounded-full overflow-hidden">
+        <div class="bucket-bar bar-fill h-full rounded-full" style="width:0%"></div>
+      </div>
+      <p class="bucket-remaining text-xs text-muted mt-2"></p>
+    </div>
+  </section>
+
+  <!-- Category breakdown + Add transaction -->
+  <section class="mt-8 grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+    <!-- Category breakdown -->
+    <div class="lg:col-span-2 rounded-xl bg-surface border border-border p-5 sm:p-6">
+      <h3 class="font-display font-semibold text-ink mb-4">Category breakdown</h3>
+      <div id="category-list" class="space-y-3">
+        <p id="category-empty" class="text-sm text-muted">No expenses logged for this month yet.</p>
+      </div>
+    </div>
+
+    <!-- Add transaction form -->
+    <div class="lg:col-span-3 rounded-xl bg-surface border border-border p-5 sm:p-6">
+      <h3 class="font-display font-semibold text-ink mb-4">Log a transaction</h3>
+      <form id="tx-form" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="sm:col-span-2">
+          <label for="tx-title" class="block text-sm font-medium text-ink mb-1.5">Title / description</label>
+          <input id="tx-title" type="text" required placeholder="e.g. Grocery run"
+            class="w-full px-3.5 py-2.5 rounded-lg bg-surface2 border border-border text-ink placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent" />
+        </div>
+        <div>
+          <label for="tx-amount" class="block text-sm font-medium text-ink mb-1.5">Amount</label>
+          <input id="tx-amount" type="number" inputmode="decimal" min="0.01" step="0.01" required placeholder="0.00"
+            class="w-full px-3.5 py-2.5 rounded-lg bg-surface2 border border-border text-ink font-mono tabular placeholder:font-sans placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent" />
+        </div>
+        <div>
+          <label for="tx-date" class="block text-sm font-medium text-ink mb-1.5">Date</label>
+          <input id="tx-date" type="date" required
+            class="w-full px-3.5 py-2.5 rounded-lg bg-surface2 border border-border text-ink font-mono focus:outline-none focus:ring-2 focus:ring-accent" />
+        </div>
+        <div class="sm:col-span-2">
+          <label for="tx-category" class="block text-sm font-medium text-ink mb-1.5">Category</label>
+          <select id="tx-category" required
+            class="w-full px-3.5 py-2.5 rounded-lg bg-surface2 border border-border text-ink focus:outline-none focus:ring-2 focus:ring-accent">
+            <optgroup label="Needs">
+              <option>Rent/Mortgage</option>
+              <option>Utilities</option>
+              <option>Groceries</option>
+              <option>Insurance</option>
+              <option>Transport</option>
+              <option>Debt Payment</option>
+            </optgroup>
+            <optgroup label="Wants">
+              <option>Entertainment</option>
+              <option>Dining Out</option>
+              <option>Shopping</option>
+              <option>Travel</option>
+              <option>Subscriptions</option>
+              <option>Hobbies</option>
+            </optgroup>
+            <optgroup label="Savings & Investments">
+              <option>Savings/Investments</option>
+              <option>Emergency Fund</option>
+              <option>Extra Debt Payoff</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="sm:col-span-2 flex items-center justify-between gap-3 pt-1">
+          <p id="form-error" class="text-sm text-bad hidden"></p>
+          <button type="submit"
+            class="ml-auto inline-flex items-center gap-2 rounded-lg bg-accent hover:opacity-90 text-white font-semibold px-5 py-2.5 shadow-sm transition-opacity">
+            Add entry
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Transaction history -->
+  <section class="mt-8 rounded-xl bg-surface border border-border overflow-hidden">
+    <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-border">
+      <h3 class="font-display font-semibold text-ink">Transaction history</h3>
+      <span id="tx-count" class="text-xs text-muted font-mono"></span>
+    </div>
+    <div class="scroll-x">
+      <table class="w-full text-sm min-w-[560px]">
+        <thead>
+          <tr class="text-left text-xs uppercase tracking-wide text-muted border-b border-border">
+            <th class="px-5 sm:px-6 py-3 font-medium">Date</th>
+            <th class="px-3 py-3 font-medium">Title</th>
+            <th class="px-3 py-3 font-medium">Category</th>
+            <th class="px-3 py-3 font-medium text-right">Amount</th>
+            <th class="px-5 sm:px-6 py-3 font-medium text-right">—</th>
+          </tr>
+        </thead>
+        <tbody id="tx-body"></tbody>
+      </table>
+    </div>
+    <p id="tx-empty" class="px-6 py-10 text-center text-sm text-muted hidden">No transactions logged for this month. Add your first one above.</p>
+  </section>
+
+  <p class="mt-8 text-xs text-muted leading-relaxed max-w-[65ch]">
+    The 50/30/20 rule splits after-tax income into needs, wants, and savings. Needs and wants are spending ceilings — staying under them is healthy. Savings is a floor — meeting or beating the 20% target is the goal. All data is stored locally in this browser only.
+  </p>
+
+</div>
+
+<script src="js/categories.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
